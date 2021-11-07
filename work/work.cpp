@@ -1,9 +1,10 @@
-﻿#include <iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
 using namespace std;
 
 struct List {
 	List* next = NULL;
-	int number;
+	long long number;
 	char* fam;
 		
 };
@@ -55,7 +56,7 @@ void Add_to_Map(Map*s, List* d) {
 	Add(s[d->fam[0] - 97].s, d);
 }
 
-void Add_to_Map(Map* s, char* sur, int number) {
+void Add_to_Map(Map* s, char* sur, long long number) {
 	// add element to map
 	List* new_node = new List;
 	new_node->fam = sur;
@@ -107,20 +108,77 @@ bool DeleteNode(Map*map,char* fum) {
 	return DeleteNode(map[fum[0] - 97].s, fum);
 }
 
+void swap_(List* a, List* b) {
+	char* c = a->fam;
+	long long nm = a->number;
+	a->fam = b->fam;
+	a->number = b->number;
+	b->fam = c;
+	b->number = nm;
+}
+void Sort(List* s) {
+	//sort list
+	List* p1 = s->next;
+	List* p2;
+	while (p1 != NULL) {
+		p2 = p1->next;
+		while (p2 != NULL) {
+			if (strcmp(p2->fam,p1->fam) < 0) {
+				swap_(p2, p1);
+			}
+			p2 = p2->next;
+		}
+		p1 = p1->next;
+	}
+	
+}
+char BUFFER[100];
+void read_file(Map* map, FILE* f) {
+	long long num;
+	char* word;
+	while (!feof(f)) {
+		fscanf(f, "%s", &BUFFER);
+		fscanf(f, "%lld", &num);
+		word = new char[strlen(BUFFER) + 1];
+		strcpy(word, BUFFER);
+		Add_to_Map(map, word, num);
+	}
+}
+void write_file(List* s, FILE* f) {
+	List* p = s->next;
+	while (p != NULL) {
+		fwrite(p->fam, sizeof(char), strlen(p->fam), f);
+		fprintf(f, "%c", ' ');
+		fprintf(f, "%lld", p->number);
+		fprintf(f, "%c", '\n');
+		p = p->next;
+		
+	}
+}
+void write_file(Map* map, FILE* f) {
+	for (int i = 0; i < 26; i++) {
+		write_file(map[i].s, f);
+	}
+}
+void Sort(Map* map) {
+	 // sort all lists
+	for (int i = 0; i < 26; i++) {
+		Sort(map[i].s);
+	}
+}
 int main()
 {
-	char o[6] = "abcdr";
 	char a[10][10]{
-		"aaaaaaafa",
-		"aaaaaaaea",
-		"aaaaaaada",
-		"aaaaaaaca",
-		"aaaaaaaba",
-		"aaaaaaaaa",
-		"aaaaaaaae",
-		"aaaaaaaad",
-		"aaaaaaaac",
-		"aaaaaaaab"
+		"abaaaaafa",
+		"acaaaaaea",
+		"adaaaaada",
+		"aeaaaaaca",
+		"afaaaaaba",
+		"agaaaaaaa",
+		"ahaaaaaae",
+		"aiaaaaaad",
+		"ajaaaaaac",
+		"akaaaaaab"
 	};
 	char b[10][10]{
 		"baaaaaafa",
@@ -134,19 +192,60 @@ int main()
 		"baaaaaaac",
 		"baaaaaaab"
 	};
+	// create book
 	Map* map = InitialMap();
+
+	// add to book (point of book,string,number phone)
 	for (int i = 0; i < 10; i++) {
-		Add_to_Map(map, a[i], 200 + i);
+		Add_to_Map(map, a[i], i);
 	}
-	PrintMap(map);
 	for (int i = 0; i < 10; i++) {
-		Add_to_Map(map, b[i], 210 + i);
+		Add_to_Map(map, b[i], i);
 	}
-	Add_to_Map(map, o, 345);
+
+	// Print a book
 	PrintMap(map);
+
+	//Search in book surname
 	SearchMap(map, b[9]);
+
 	PrintMap(map);
+
+	//delete info by pointer
 	DeleteNode(map, a[1]);
+	PrintMap(map);
+
+	//Sort book
+	Sort(map);
+	PrintMap(map);
+
+	//read book by file(txt)
+	FILE* f;
+	f = fopen("TextFile1.txt", "r");
+	if (f != NULL) {
+		read_file(map, f);
+		fclose(f);
+	}
+	else {
+		printf("Not read file \n");
+	}
+
+	PrintMap(map);
+
+	//write book to file
+
+	f = fopen("text.txt", "w");
+	if (f != NULL) {
+		write_file(map, f);
+	}
+	else {
+		cout << "NOT WRITE FILE";
+	}
+	fclose(f);
+
+	f = fopen("text.txt", "r");
+	
+	read_file(map, f);
 	PrintMap(map);
 
 	return 0;
