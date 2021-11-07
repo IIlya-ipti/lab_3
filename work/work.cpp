@@ -242,10 +242,6 @@ int main()
 		cout << "NOT WRITE FILE";
 	}
 	fclose(f);
-
-	f = fopen("text.txt", "r");
-	
-	read_file(map, f);
 	PrintMap(map);
 
 	return 0;
