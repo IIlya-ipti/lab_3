@@ -132,13 +132,13 @@ void Sort(List* s) {
 	}
 	
 }
-char BUFFER[100];
+char BUFFER[10];
 void read_file(Map* map, FILE* f) {
 	long long num;
 	char* word;
 	while (!feof(f)) {
-		fscanf(f, "%s", &BUFFER);
-		fscanf(f, "%lld", &num);
+		if(!(fscanf(f, "%s", &BUFFER)))return ;
+		if (!(fscanf(f, "%lld", &num)))return;
 		word = new char[strlen(BUFFER) + 1];
 		strcpy(word, BUFFER);
 		Add_to_Map(map, word, num);
