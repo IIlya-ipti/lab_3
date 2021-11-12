@@ -132,7 +132,7 @@ void Sort(List* s) {
 	}
 	
 }
-char BUFFER[10];
+char BUFFER[100];
 void read_file(Map* map, FILE* f) {
 	long long num;
 	char* word;
